@@ -1,10 +1,12 @@
 from django.db import models
-
 from jogging import logging
-
 from pprint import pprint
+import re
 
 USER_AGENT = 'vz_stream/0.1 +http://jobscry.net'
+
+TWITTER_AT = re.compile(r'@([^\s]+)')
+TWITTER_HASH = re.compile(r'(#[^\s]+)')
 
 class Source(models.Model):
     """
@@ -15,7 +17,13 @@ class Source(models.Model):
     set to False and the error message is saved in error_message for trouble-
     shooting purposes.
     """
+    TYPE_CHOICES = (
+        ('o', 'Other'),
+        ('t', 'Twitter'),
+    )
+
     name  = models.CharField(blank=True, max_length=100)
+    feed_type = models.CharField(max_length=2, choices=TYPE_CHOICES)
     url = models.URLField(unique=True, verify_exists=True)
     etag = models.CharField(blank=True, null=True, max_length=255)
     last_modified = models.DateTimeField(blank=True, null=True)
@@ -31,8 +39,6 @@ class Source(models.Model):
         Update
         
         Uses FeedParser to grab and parse feed.
-        
-        
         """
         from utils import feedparser
         import datetime
@@ -65,6 +71,9 @@ class Source(models.Model):
                     else:
                         dentry.get('content', 'None')
 
+                    if self.feed_type == 't':
+                        text = self._twitter_parser(text)
+
                     Entry.objects.create(
                         source=self,
                         url=dentry.link,
@@ -87,8 +96,26 @@ class Source(models.Model):
         self.save()
 
 
+    def _twitter_parser(self, text):
+        """
+        Twitter Parser
+        
+        Special parsing for twitter feeds.
+        """
+        from string import find
+
+        username = find(text, ':')
+        if username > -1:
+            text = text[username+2:]
+        
+        text = TWITTER_AT.sub(r'<a href="http://twitter.com/\1" title="\1\'s twitter feed">\1</a>', text)
+        text = TWITTER_HASH.sub(r'<a href="http://twitter.com/search?q=\1" title="\1">\1</a>', text)
+        
+        return text
+
+
     def __unicode__(self):
-        return u"%s"%(self.name)
+        return self.name
 
 class Entry(models.Model):
     """
