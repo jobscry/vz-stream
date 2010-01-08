@@ -1,6 +1,7 @@
 from django.db import models
 from jogging import logging
 from pprint import pprint
+from string import find
 import re
 
 USER_AGENT = 'vz_stream/0.1 +http://jobscry.net'
@@ -73,10 +74,10 @@ class Source(models.Model):
                     else:
                         dentry.get('content', 'None')
 
-                    if self.feed_type == 't':
-                        text = self._twitter_parser(text)
                     if self.auto_link:
                         text = self._auto_link(text)
+                    if self.feed_type == 't':
+                        text = self._twitter_parser(text)
 
                     Entry.objects.create(
                         source=self,
@@ -115,8 +116,6 @@ class Source(models.Model):
         Third, replace #TOPIC with <a href="http://twitter.com/search?q=#TOPIC" title="#TOPIC">
         #TOPIC</a>.
         """
-        from string import find
-
         username = find(text, ':')
         if username > -1:
             text = text[username+2:]
