@@ -7,6 +7,7 @@ USER_AGENT = 'vz_stream/0.1 +http://jobscry.net'
 
 TWITTER_AT = re.compile(r'@([^\s]+)')
 TWITTER_HASH = re.compile(r'(#[^\s]+)')
+URL = re.compile(r'(http://[^\s]+)')
 
 class Source(models.Model):
     """
@@ -25,6 +26,7 @@ class Source(models.Model):
     name  = models.CharField(blank=True, max_length=100)
     feed_type = models.CharField(max_length=2, choices=TYPE_CHOICES)
     url = models.URLField(unique=True, verify_exists=True)
+    auto_link = models.BooleanField(default=False, help_text="Auto Link URLS in feed's entries?")
     etag = models.CharField(blank=True, null=True, max_length=255)
     last_modified = models.DateTimeField(blank=True, null=True)
     last_status_code = models.IntegerField(blank=True, null=True)
@@ -73,6 +75,8 @@ class Source(models.Model):
 
                     if self.feed_type == 't':
                         text = self._twitter_parser(text)
+                    if self.auto_link:
+                        text = self._auto_link(text)
 
                     Entry.objects.create(
                         source=self,
@@ -121,6 +125,14 @@ class Source(models.Model):
         text = TWITTER_HASH.sub(r'<a href="http://twitter.com/search?q=\1" title="\1">\1</a>', text)
         
         return text
+
+    def _auto_link(self, text):
+        """
+        Auto Link
+        
+        If the source's auto_link option is True, turn urls into links.
+        """
+        return URL.sub(r'<a href="\1">\1</a>', text)
 
 
     def __unicode__(self):
