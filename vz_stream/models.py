@@ -101,6 +101,15 @@ class Source(models.Model):
         Twitter Parser
         
         Special parsing for twitter feeds.
+        
+        First, remove USERNAME: from text.  This is characters 0 to n, where n is the first
+        occurence of ":".
+        
+        Second, replace any @USERNAME with <a href="http://twitter.com/USERNAME"
+        title="USERNAME's twitter feed">USERNAME</a>.
+        
+        Third, replace #TOPIC with <a href="http://twitter.com/search?q=#TOPIC" title="#TOPIC">
+        #TOPIC</a>.
         """
         from string import find
 
