@@ -5,7 +5,7 @@ class SourceAdmin(admin.ModelAdmin):
     date_hierarchy = 'last_modified'
     fieldsets = (
         (None, {
-            'fields': ('name', 'url')
+            'fields': ('name', 'url', 'enabled')
         }),
         ('Feed Options', {
             'fields': ('feed_type', 'auto_link')
@@ -14,7 +14,7 @@ class SourceAdmin(admin.ModelAdmin):
             'fields': ('last_update_successful', 'etag', 'last_modified', 'last_status_code', 'error_message')
         })
     )
-    list_display = ('name', 'num_entries', 'feed_type', 'auto_link', 'last_status_code',
+    list_display = ('name', 'num_entries', 'feed_type', 'enabled', 'auto_link', 'last_status_code',
         'last_modified', 'created_on', 'modified')
     
 

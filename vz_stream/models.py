@@ -28,6 +28,7 @@ class Source(models.Model):
     feed_type = models.CharField(max_length=2, choices=TYPE_CHOICES)
     url = models.URLField(unique=True, verify_exists=True)
     auto_link = models.BooleanField(default=False, help_text="Auto Link URLS in feed's entries?")
+    enabled = models.BooleanField(default=True)
     etag = models.CharField(blank=True, null=True, max_length=255)
     last_modified = models.DateTimeField(blank=True, null=True)
     last_status_code = models.IntegerField(blank=True, null=True)
@@ -43,6 +44,10 @@ class Source(models.Model):
         
         Uses FeedParser to grab and parse feed.
         """
+        
+        if self.enabled is False:
+            return
+        
         from utils import feedparser
         import datetime
         
