@@ -8,13 +8,13 @@ class SourceAdmin(admin.ModelAdmin):
             'fields': ('name', 'url', 'enabled')
         }),
         ('Feed Options', {
-            'fields': ('feed_type', 'auto_link')
+            'fields': ('feed_type', )
         }),
         ('Info', {
             'fields': ('last_update_successful', 'etag', 'last_modified', 'last_status_code', 'error_message')
         })
     )
-    list_display = ('name', 'num_entries', 'feed_type', 'enabled', 'auto_link', 'last_status_code',
+    list_display = ('name', 'num_entries', 'feed_type', 'enabled', 'last_status_code',
         'last_modified', 'created_on', 'modified')
     
 
