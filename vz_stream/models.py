@@ -7,8 +7,8 @@ import re
 USER_AGENT = 'vz_stream/0.1 +http://jobscry.net'
 
 TWITTER_AT = re.compile(r'@([^\s]+)')
+TWITTER_AT_REPLACE = r'<a href="http://twitter.com/\1" title="\1 twitter feed">@\1</a>'
 TWITTER_HASH = re.compile(r'(#[^\s]+)')
-URL = re.compile(r'(http://[^\s]+)')
 
 class Source(models.Model):
     """
@@ -27,7 +27,6 @@ class Source(models.Model):
     name  = models.CharField(blank=True, max_length=100)
     feed_type = models.CharField(max_length=2, choices=TYPE_CHOICES)
     url = models.URLField(unique=True, verify_exists=True)
-    auto_link = models.BooleanField(default=False, help_text="Auto Link URLS in feed's entries?")
     enabled = models.BooleanField(default=True)
     etag = models.CharField(blank=True, null=True, max_length=255)
     last_modified = models.DateTimeField(blank=True, null=True)
@@ -72,15 +71,13 @@ class Source(models.Model):
                     if self.last_modified and (created_on < self.last_modified):
                         break
 
-                    if dentry.has_key('summary'):
-                        text = dentry.summary
-                    elif dentry.has_key('title'):
+                    if dentry.has_key('title'):
                         text = dentry.title
+                    elif dentry.has_key('summary'):
+                        text = dentry.summary
                     else:
                         dentry.get('content', 'None')
 
-                    if self.auto_link:
-                        text = self._auto_link(text)
                     if self.feed_type == 't':
                         text = self._twitter_parser(text)
 
@@ -125,18 +122,10 @@ class Source(models.Model):
         if username > -1:
             text = text[username+2:]
         
-        text = TWITTER_AT.sub(r'<a href="http://twitter.com/\1" title="\1\'s twitter feed">\1</a>', text)
+        text = TWITTER_AT.sub(TWITTER_AT_REPLACE, text)
         text = TWITTER_HASH.sub(r'<a href="http://twitter.com/search?q=\1" title="\1">\1</a>', text)
         
         return text
-
-    def _auto_link(self, text):
-        """
-        Auto Link
-        
-        If the source's auto_link option is True, turn urls into links.
-        """
-        return URL.sub(r'<a href="\1">\1</a>', text)
 
 
     def __unicode__(self):
@@ -157,6 +146,7 @@ class Entry(models.Model):
 
     class Meta:
         verbose_name_plural = 'Entries'
+        ordering = ['-created_on']
 
 
     def __unicode__(self):

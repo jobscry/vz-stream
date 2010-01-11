@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content_title %}<h2>Stream</h2>{% endblock %}
+
+{% block content %}
+	{% for entry in entries %}
+		<p>
+			{{ entry.text|safe|urlize }} - <a href="{{ entry.url}}">link</a><br>
+			<small>via {{ entry.source.name }} on {{ entry.created_on|date }}</small>
+		</p>
+	{% empty %}
+		<p>No entries.</p>
+	{% endfor %}
+{% endblock %}
