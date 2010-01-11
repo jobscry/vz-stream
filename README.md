@@ -13,8 +13,8 @@ TODO
 ----
 
 - templates
-  - view all entries
-  - view entries by source
+  - <del>view all entries</del>
+  - <del>view entries by source</del>
   - view entries by date
   - stream stats
 - search/filter entries
