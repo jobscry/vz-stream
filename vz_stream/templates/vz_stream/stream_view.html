@@ -4,7 +4,7 @@
 
 {% block content %}
 	{% for entry in entries %}
-		<p>
+		<p class="stream_{{ entry.source.name|lower }}">
 			{{ entry.text|safe|urlize }} - <a href="{{ entry.url}}">link</a><br>
 			<small>via {{ entry.source.name }} on {{ entry.created_on|date }}</small>
 		</p>
