@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content_title %}
+	{% if source %}
+<h2>Stream</h2>
+	{% else %}
+<h2>Stream Stats</h2>
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+<img src="http://chart.apis.google.com/chart?cht=p&amp;chtt=Entries+by+Source&amp;chd=t:{{ ebs_percent|join:","}}&amp;chl={{ sources_list|join:"|"}}&amp;chs=400x250">
+{% endblock %}
