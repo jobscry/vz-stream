@@ -18,22 +18,24 @@ def stream_stats(request, pk=None):
     if pk is None:
         sources = get_list_or_404(Source)
     num_entries = float(Entry.objects.all().count())
-    sources_list = Source.objects.values_list('name', flat=True)
-    ebs_count = list()
-    ebs_percent = list()
-    
+
+    data = list()
     for source in sources:
         count = Entry.objects.filter(source=source).count()
-        ebs_count.append(count)
-        ebs_percent.append(count/num_entries*100)
+        data.append(
+            dict({
+                'source': source.name,
+                'count': count,
+                'percent': count/num_entries*100
+            })
+        )
 
     return render_to_response(
         'vz_stream/stream_stats.html',
         {
             'num_entries': num_entries,
-            'ebs_count': ebs_count,
-            'ebs_percent': ebs_percent,
-            'sources_list': sources_list,
+            'sources': sources,
+            'data': data,
         },
         context_instance=RequestContext(request)
     )

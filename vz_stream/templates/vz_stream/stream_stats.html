@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/visualize.jQuery.css" media="all">
+<script src="{{MEDIA_URL}}js/visualize.jQuery.js"></script>
+<script> 
+	$(function(){
+		$('table').visualize({type: 'pie', pieMargin: 10});	
+	});
+</script>
+{% endblock %}
+
 {% block content_title %}
 	{% if source %}
 <h2>Stream</h2>
@@ -9,5 +19,21 @@
 {% endblock %}
 
 {% block content %}
-<img src="http://chart.apis.google.com/chart?cht=p&amp;chtt=Entries+by+Source&amp;chd=t:{{ ebs_percent|join:","}}&amp;chl={{ sources_list|join:"|"}}&amp;chs=400x250">
+<table style="width: 500px">
+	<caption>Stream Entries by Source</caption>
+	<thead>
+		<tr>
+			<td>&nbsp;</td>
+			<th scope="col">Count</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for ddict in data %}
+		<tr>
+			<th scope="row">{{ ddict.source }}</th>
+			<td>{{ ddict.count }}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
 {% endblock %}
