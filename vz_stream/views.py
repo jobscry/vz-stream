@@ -1,13 +1,15 @@
 from django.db.models import Count
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
 from django.template import RequestContext
+from django.views.decorators.cache import cache_page
 from models import Entry, Source
 
 import datetime, calendar
 
 NUM_ENTRIES = 20
 
-def stream_stats(request, year=None, month=None):
+@cache_page(60 * 15)
+def stream_stats(request, year=None, month=None, template='vz_stream/stream_stats.html'):
     """
     Stream Stats
     
@@ -71,7 +73,7 @@ def stream_stats(request, year=None, month=None):
         context_instance=RequestContext(request)
     )
 
-
+@cache_page(60 * 15)
 def view_stream(request, pk):
     """
     View Stream
