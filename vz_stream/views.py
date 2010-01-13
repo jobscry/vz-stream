@@ -1,10 +1,13 @@
+from django.db.models import Count
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
 from django.template import RequestContext
 from models import Entry, Source
 
+import datetime, calendar
+
 NUM_ENTRIES = 20
 
-def stream_stats(request, pk=None):
+def stream_stats(request, year=None, month=None):
     """
     Stream Stats
     
@@ -15,20 +18,44 @@ def stream_stats(request, pk=None):
         }
     
     """
-    if pk is None:
-        sources = get_list_or_404(Source)
-    num_entries = float(Entry.objects.all().count())
+    sources = get_list_or_404(Source)
+    num_entries = Entry.objects.all().count()
 
-    data = list()
-    for source in sources:
-        count = Entry.objects.filter(source=source).count()
-        data.append(
-            dict({
-                'source': source.name,
-                'count': count,
-                'percent': count/num_entries*100
-            })
-        )
+    data = Entry.objects.values('source__name').annotate(count=Count('source')).order_by().select_related()
+    
+    today = datetime.date.today()
+    if year is None:
+        year = today.year
+    if month is None:
+        month = today.month
+    
+    date = datetime.date(month=month, year=year, day=1)
+    
+    month_data = Entry.objects.filter(
+        created_on__year=date.year,
+        created_on__month=date.month
+    ).values('source__name').annotate(count=Count('source')).order_by().select_related()
+
+    day_data = dict()
+    day_range = range(1, calendar.monthrange(date.year, date.month)[1]+1)
+    for day in day_range:
+        if day > 0:
+            for source in sources:
+                if source.name not in day_data:
+                    day_data[source.name] = dict()
+                day_data[source.name][day] = Entry.objects.filter(
+                        source=source,
+                        created_on__year=date.year,
+                        created_on__month=date.month,
+                        created_on__day=day
+                    ).count()
+            if 'all sources' not in day_data:
+                day_data['all sources'] = dict()
+            day_data['all sources'][day] = Entry.objects.filter(
+                created_on__year=date.year,
+                created_on__month=date.month,
+                created_on__day=day
+            ).count()            
 
     return render_to_response(
         'vz_stream/stream_stats.html',
@@ -36,6 +63,10 @@ def stream_stats(request, pk=None):
             'num_entries': num_entries,
             'sources': sources,
             'data': data,
+            'date': date,
+            'month_data': month_data,
+            'day_data': day_data,
+            'day_range': day_range
         },
         context_instance=RequestContext(request)
     )

@@ -2,10 +2,18 @@
 
 {% block extra_head %}
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/visualize.jQuery.css" media="all">
+<style>
+table{
+	width: 600px;
+	border: solid 1px #000000;
+	margin: 2em;
+}
+</style>
 <script src="{{MEDIA_URL}}js/visualize.jQuery.js"></script>
 <script> 
 	$(function(){
-		$('table').visualize({type: 'pie', pieMargin: 10});	
+		$('table.pie').visualize({type: 'pie', pieMargin: 10});
+		$('table.line').visualize({type: 'line'});
 	});
 </script>
 {% endblock %}
@@ -19,8 +27,8 @@
 {% endblock %}
 
 {% block content %}
-<table style="width: 500px">
-	<caption>Stream Entries by Source</caption>
+<table class="pie">
+	<caption>Stream Entries by Source for All Time</caption>
 	<thead>
 		<tr>
 			<td>&nbsp;</td>
@@ -30,8 +38,47 @@
 	<tbody>
 	{% for ddict in data %}
 		<tr>
-			<th scope="row">{{ ddict.source }}</th>
+			<th scope="row">{{ ddict.source__name }}</th>
 			<td>{{ ddict.count }}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+
+<table class="pie">
+	<caption>Stream Entries by Source for {{ date|date:"F Y" }}</caption>
+	<thead>
+		<tr>
+			<td>&nbsp;</td>
+			<th scope="col">Count</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for ddict in month_data %}
+		<tr>
+			<th scope="row">{{ ddict.source__name }}</th>
+			<td>{{ ddict.count }}</td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+<table class="line">
+	<caption>Stream Entries by Day for {{ date|date:"F Y" }}</caption>
+	<thead>
+		<tr>
+			<td>&nbsp;</td>
+	{% for day in day_range %}
+			<th scope="col">{{ forloop.counter }}</th>
+	{% endfor %}
+		</tr>
+	</thead>
+	<tbody>
+	{% for source_name, days in day_data.items %}
+		<tr>
+			<th scope="row">{{ source_name }}</td>
+		{% for day, count in days.items %}
+			<td>{{ count }}</td>
+		{% endfor %}
 		</tr>
 	{% endfor %}
 	</tbody>

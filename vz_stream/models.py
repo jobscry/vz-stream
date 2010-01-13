@@ -150,4 +150,4 @@ class Entry(models.Model):
 
 
     def __unicode__(self):
-        return u"From %s on %s"%(self.source, self.retrieved_on.strftime('%d %b %y @ %H:%M:%S'))
+        return u"From %s on %s"%(self.source, self.retrieved_on.strftime('%d %b %y @ %H:%M:%S'))    
