@@ -1,4 +1,6 @@
+from django.core import serializers
 from django.db.models import Count
+from django.http import HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.views.decorators.cache import cache_page
@@ -80,16 +82,30 @@ def stream_stats(request, year=None, month=None, template='vz_stream/stream_stat
     )
 
 @cache_page(60 * 15)
-def view_stream(request, num_entries=20, template='vz_stream/stream_view.html'):
+def view_stream(request, num_entries=20, template='vz_stream/stream_view.html', mimetype='text/html'):
     """
     View Stream
     
     Grabs last NUM_ENTRIES entries for all sources.
     """
-    entries = get_list_or_404(Entry)
+    entries = get_list_or_404(Entry)[0:num_entries]
+    if mimetype == 'application/json':
+        json_serializer = serializers.get_serializer("json")()
+        return HttpResponse(
+            json_serializer.serialize(entries), mimetype=mimetype
+        )
+    if mimetype == 'text/xml':
+        return HttpResponse(
+            serializers.serialize('xml', entries)
+        )
+    if mimetype == 'text/x-yaml':
+        return HttpResponse(
+            serializers.serialize('yaml', entries)
+        )
+
     return render_to_response(
         template,
-        { 'entries': entries[0:num_entries] },
+        { 'entries': entries },
         context_instance=RequestContext(request)
     )
         
