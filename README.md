@@ -18,6 +18,6 @@ TODO
   - <del>view all entries</del>
   - <del>view entries by source</del>
   - view entries by date
-  - stream stats
+  - <del>stream stats</del>
 - search/filter entries
 - customizable cron job script

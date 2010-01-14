@@ -24,14 +24,17 @@ def stream_stats(request, year=None, month=None, template='vz_stream/stream_stat
     num_entries = Entry.objects.all().count()
 
     data = Entry.objects.values('source__name').annotate(count=Count('source')).order_by().select_related()
-    
+
     today = datetime.date.today()
+    if int(year) > today.year:
+        year = None
+
     if year is None:
         year = today.year
     if month is None:
         month = today.month
     
-    date = datetime.date(month=month, year=year, day=1)
+    date = datetime.date(month=int(month), year=int(year), day=1)
     
     month_data = Entry.objects.filter(
         created_on__year=date.year,
