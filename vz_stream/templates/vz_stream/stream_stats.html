@@ -19,11 +19,7 @@ table{
 {% endblock %}
 
 {% block content_title %}
-	{% if source %}
-<h2>Stream</h2>
-	{% else %}
-<h2>Stream Stats</h2>
-	{% endif %}
+<h2>Stream Stats for {{ date|date:"F Y" }}</h2>
 {% endblock %}
 
 {% block content %}

@@ -80,22 +80,16 @@ def stream_stats(request, year=None, month=None, template='vz_stream/stream_stat
     )
 
 @cache_page(60 * 15)
-def view_stream(request, pk):
+def view_stream(request, num_entries=20, template='vz_stream/stream_view.html'):
     """
     View Stream
     
-    Grabs last NUM_ENTRIES entries for specified source, identified by pk (primary key).
-    If pk is None, grab NUM_ENTRIES entries for all sources.
+    Grabs last NUM_ENTRIES entries for all sources.
     """
-    if pk is None:
-        source = None
-        entries = get_list_or_404(Entry)
-    else:
-        source = get_object_or_404(Source, pk=pk)
-        entries = get_list_or_404(Entry, source=source)
+    entries = get_list_or_404(Entry)
     return render_to_response(
-        'vz_stream/stream_view.html',
-        { 'entries': entries[0:20], 'source': source, },
+        template,
+        { 'entries': entries[0:num_entries] },
         context_instance=RequestContext(request)
     )
         
