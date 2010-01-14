@@ -28,24 +28,6 @@ table{
 
 {% block content %}
 <table class="pie">
-	<caption>Stream Entries by Source for All Time</caption>
-	<thead>
-		<tr>
-			<td>&nbsp;</td>
-			<th scope="col">Count</th>
-		</tr>
-	</thead>
-	<tbody>
-	{% for ddict in ebs_total %}
-		<tr>
-			<th scope="row">{{ ddict.source__name }}</th>
-			<td>{{ ddict.count }}</td>
-		</tr>
-	{% endfor %}
-	</tbody>
-</table>
-
-<table class="pie">
 	<caption>Stream Entries by Source for {{ date|date:"F Y" }}</caption>
 	<thead>
 		<tr>

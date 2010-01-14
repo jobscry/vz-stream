@@ -17,6 +17,8 @@ def stream_stats(request, year=None, month=None, template='vz_stream/stream_stat
     Context:
         sources
             Queryset of all Source objects.
+        date
+            Date: year and month for stats.
         ebs_total
             List of Source objects with Entry count for all time.
         month_data
@@ -27,8 +29,6 @@ def stream_stats(request, year=None, month=None, template='vz_stream/stream_stat
             Range of days in month from 1 - number of days in month
     """
     sources = get_list_or_404(Source)
-
-    ebs_total = Entry.objects.values('source__name').annotate(count=Count('source')).order_by().select_related()
 
     today = datetime.date.today()
     if int(year) > today.year:
@@ -71,7 +71,6 @@ def stream_stats(request, year=None, month=None, template='vz_stream/stream_stat
         template,
         {
             'sources': sources,
-            'ebs_total': ebs_total,
             'date': date,
             'month_data': month_data,
             'day_data': day_data,
