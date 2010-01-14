@@ -87,6 +87,11 @@ def view_stream(request, num_entries=20, template='vz_stream/stream_view.html', 
     View Stream
     
     Grabs last NUM_ENTRIES entries for all sources.
+    
+    Template:  ```vz_stream/stream_view.html```
+    Context:
+        entries
+            Last NUM_ENTRIES Entry queryset
     """
     entries = get_list_or_404(Entry)[0:num_entries]
     if mimetype == 'application/json':
