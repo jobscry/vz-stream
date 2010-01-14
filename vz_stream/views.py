@@ -11,19 +11,24 @@ NUM_ENTRIES = 20
 @cache_page(60 * 15)
 def stream_stats(request, year=None, month=None, template='vz_stream/stream_stats.html'):
     """
-    Stream Stats
+    Stream Stats view
     
-    total_entries: integer
-    entries_by_source:
-        {
-            source: num_entries,
-        }
-    
+    Template: ``vz_stream/stream_stats.html``
+    Context:
+        sources
+            Queryset of all Source objects.
+        ebs_total
+            List of Source objects with Entry count for all time.
+        month_data
+            List of Source objects with Entry count for Year and Month
+        day_data
+            List of Sources with Entry count per day for Year Month
+        day_range
+            Range of days in month from 1 - number of days in month
     """
     sources = get_list_or_404(Source)
-    num_entries = Entry.objects.all().count()
 
-    data = Entry.objects.values('source__name').annotate(count=Count('source')).order_by().select_related()
+    ebs_total = Entry.objects.values('source__name').annotate(count=Count('source')).order_by().select_related()
 
     today = datetime.date.today()
     if int(year) > today.year:
@@ -63,11 +68,10 @@ def stream_stats(request, year=None, month=None, template='vz_stream/stream_stat
             ).count()            
 
     return render_to_response(
-        'vz_stream/stream_stats.html',
+        template,
         {
-            'num_entries': num_entries,
             'sources': sources,
-            'data': data,
+            'ebs_total': ebs_total,
             'date': date,
             'month_data': month_data,
             'day_data': day_data,
