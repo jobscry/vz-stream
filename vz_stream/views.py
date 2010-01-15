@@ -113,13 +113,3 @@ def view_stream(request, num_entries=20, template='vz_stream/stream_view.html', 
         { 'entries': entries },
         context_instance=RequestContext(request)
     )
-        
-def update(request, pk):
-    if pk is None:
-        sources = get_list_or_404(Source)
-    else:
-        sources = get_list_or_404(Source, pk=pk)
-        
-    for source in sources:
-        source.update()
-    return HttpResponse(status=200)
