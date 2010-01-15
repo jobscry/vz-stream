@@ -20,4 +20,4 @@ TODO
   - view entries by date
   - <del>stream stats</del>
 - search/filter entries
-- customizable cron job script
+- <del>cron job script</del>
