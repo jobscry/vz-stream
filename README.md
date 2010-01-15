@@ -22,6 +22,11 @@ TODO
 * search/filter entries
 * <del>cron job script</del>
 
+Settings
+--------
+
+You can put *STREAM\_NUM\_ENTIRES* in your settings.py, this should be an integer.  This defines how many entries to get in the *stream\_view* view.  Defaults to 20.
+
 Templates
 ---------
 

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core import serializers
 from django.db.models import Count
 from django.http import HttpResponse
@@ -8,7 +9,10 @@ from models import Entry, Source
 
 import datetime, calendar
 
-NUM_ENTRIES = 20
+try:
+    STREAM_NUM_ENTRIES = settings.STREAM_NUM_ENTRIES
+except AttributeError:
+    STREAM_NUM_ENTRIES = 20
 
 def stream_stats(request, year=None, month=None, template='vz_stream/stream_stats.html'):
     """
@@ -80,7 +84,7 @@ def stream_stats(request, year=None, month=None, template='vz_stream/stream_stat
         context_instance=RequestContext(request)
     )
 
-def view_stream(request, num_entries=20, template='vz_stream/stream_view.html', mimetype='text/html'):
+def view_stream(request, num_entries=None, template='vz_stream/stream_view.html', mimetype='text/html'):
     """
     View Stream
     
@@ -91,6 +95,8 @@ def view_stream(request, num_entries=20, template='vz_stream/stream_view.html', 
         entries
             Last NUM_ENTRIES Entry queryset
     """
+    if num_entries is None:
+        num_entries = STREAM_NUM_ENTRIES
     entries = get_list_or_404(Entry)[0:num_entries]
     if mimetype == 'application/json':
         json_serializer = serializers.get_serializer("json")()
