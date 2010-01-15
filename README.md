@@ -22,6 +22,12 @@ TODO
 * search/filter entries
 * <del>cron job script</del>
 
+Features
+--------
+
+* *Smart* updating:  uses E-Tag or last-modified from headers to determine if source should be updated or not.  For feeds that have neither, only add entries newer than the source's last entry.
+* Twitter parsing, if the feed is a twitter feed *@USER* is converted to a link, as well as *#TOPIC*.
+
 Settings
 --------
 
