@@ -1,6 +1,15 @@
 from django.contrib import admin
 from models import Source, Entry
 
+
+def make_enabled(SourceAdmin, request, queryset):
+    queryset.update(enabled=True)
+make_enabled.short_description = 'Enable selected sources'
+
+def make_disabled(SourceAdmin, request, queryset):
+    queryset.update(enabled=False)
+make_disabled.short_description = 'Disable selected sources'
+
 class SourceAdmin(admin.ModelAdmin):
     date_hierarchy = 'last_modified'
     fieldsets = (
@@ -16,7 +25,7 @@ class SourceAdmin(admin.ModelAdmin):
     )
     list_display = ('name', 'num_entries', 'feed_type', 'enabled', 'last_status_code',
         'last_modified', 'created_on', 'modified')
-    
+    actions = [make_enabled, make_disabled]
 
     def num_entries(self, obj):
         return Entry.objects.filter(source=obj.pk).count()

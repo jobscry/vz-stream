@@ -122,4 +122,4 @@ def update(request, pk):
         
     for source in sources:
         source.update()
-    return ''
+    return HttpResponse(status=200)
