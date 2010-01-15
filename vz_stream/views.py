@@ -10,7 +10,6 @@ import datetime, calendar
 
 NUM_ENTRIES = 20
 
-@cache_page(60 * 15)
 def stream_stats(request, year=None, month=None, template='vz_stream/stream_stats.html'):
     """
     Stream Stats view
@@ -81,7 +80,6 @@ def stream_stats(request, year=None, month=None, template='vz_stream/stream_stat
         context_instance=RequestContext(request)
     )
 
-@cache_page(60 * 15)
 def view_stream(request, num_entries=20, template='vz_stream/stream_view.html', mimetype='text/html'):
     """
     View Stream
