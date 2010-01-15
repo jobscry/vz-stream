@@ -44,3 +44,10 @@ Template Blocks for __stream\_stats.html__
 * _extra\_head_ - only if you want the jQuery Visualize graphs
 * _content\_title_
 * _content_
+
+Updating Your Life Stream
+-------------------------
+
+Included is a [custom Django-Admin Command](http://docs.djangoproject.com/en/dev/howto/custom-management-commands/#writing-custom-django-admin-commands) that will update your life stream.  This can be added to a cron task.
+
+`python path/to/project/manage.py stream_update`
