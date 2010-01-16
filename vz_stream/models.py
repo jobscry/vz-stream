@@ -3,6 +3,9 @@ from pprint import pprint
 from string import find
 import re
 
+from utils import feedparser
+import datetime
+
 USER_AGENT = 'vz_stream/0.1 +http://jobscry.net'
 
 TWITTER_AT = re.compile(r'@([^\s]+)')
@@ -45,10 +48,7 @@ class Source(models.Model):
         
         if self.enabled is False:
             return
-        
-        from utils import feedparser
-        import datetime
-        
+
         if self.last_modified:
             modified = self.last_modified.timetuple()
         else:
