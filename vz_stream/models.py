@@ -1,5 +1,4 @@
 from django.db import models
-from jogging import logging
 from pprint import pprint
 from string import find
 import re
