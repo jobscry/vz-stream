@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.core import serializers
 from django.db.models import Count
 from django.http import HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
@@ -97,20 +96,23 @@ def view_stream(request, num_entries=None, template='vz_stream/stream_view.html'
     """
     if num_entries is None:
         num_entries = STREAM_NUM_ENTRIES
-    entries = get_list_or_404(Entry)[0:num_entries]
+    entries = Entry.objects.filter(source__enabled=True).values_list(
+        'source__name',
+        'text',
+        'url',
+        'created_on'
+    )[0:num_entries]
     if mimetype == 'application/json':
-        json_serializer = serializers.get_serializer("json")()
-        return HttpResponse(
-            json_serializer.serialize(entries), mimetype=mimetype
-        )
-    if mimetype == 'text/xml':
-        return HttpResponse(
-            serializers.serialize('xml', entries)
-        )
-    if mimetype == 'text/x-yaml':
-        return HttpResponse(
-            serializers.serialize('yaml', entries)
-        )
+        import simplejson
+        entries_list = []
+        for source, text, url, created_on in entries:
+            entries_list.append({
+                'source': source,
+                'text': text,
+                'url': url,
+                'created_on': created_on.isoformat()
+            })
+        return HttpResponse(simplejson.dumps(entries_list), mimetype=mimetype)
 
     return render_to_response(
         template,
