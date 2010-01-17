@@ -10,6 +10,10 @@ def make_disabled(SourceAdmin, request, queryset):
     queryset.update(enabled=False)
 make_disabled.short_description = 'Disable selected sources'
 
+def reset_source(SourceAdmin, request, queryset):
+    queryset.update(etag=None, last_modified=None)
+reset_source.short_description = 'Reset selected sources'
+
 class SourceAdmin(admin.ModelAdmin):
     date_hierarchy = 'last_modified'
     fieldsets = (
@@ -25,7 +29,7 @@ class SourceAdmin(admin.ModelAdmin):
     )
     list_display = ('name', 'num_entries', 'feed_type', 'enabled', 'last_status_code',
         'last_modified', 'created_on', 'modified')
-    actions = [make_enabled, make_disabled]
+    actions = [make_enabled, make_disabled, reset_source]
 
     def num_entries(self, obj):
         return Entry.objects.filter(source=obj.pk).count()
@@ -33,7 +37,7 @@ class SourceAdmin(admin.ModelAdmin):
 admin.site.register(Source, SourceAdmin)
 
 class EntryAdmin(admin.ModelAdmin):
-    date_hierarchy = 'created_on'
     list_display = ('source', 'created_on', 'retrieved_on')
+    list_filter = ('source', )
 
 admin.site.register(Entry, EntryAdmin)

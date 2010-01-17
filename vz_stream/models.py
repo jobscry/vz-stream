@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from pprint import pprint
 from string import find
@@ -61,6 +62,7 @@ class Source(models.Model):
 
         if data.bozo != 1:
             if data.status != 304:
+                data.entries.reverse()
                 while data.entries:
                     dentry = data.entries.pop()
 
@@ -97,7 +99,11 @@ class Source(models.Model):
                 if data.has_key('modified'):
                     self.last_modified = datetime.datetime(*data.modified[0:6])
                 else:
-                    self.last_modified = datetime.datetime.now()
+                    try:
+                        latest = Entry.objects.filter(source=self).latest('created_on')
+                        self.last_modified = latest.created_on
+                    except ObjectDoesNotExist:
+                        pass
 
             self.last_update_successful = True
             self.last_status_code = data.status
