@@ -94,10 +94,10 @@ class Source(models.Model):
 
                     if data.has_key('etag'):
                         self.etag = data.etag
-                        if data.has_key('modified'):
-                            self.last_modified = datetime.datetime(*data.modified[0:6])
-                        else:
-                            self.last_modified = datetime.datetime.now()
+                    if data.has_key('modified'):
+                        self.last_modified = datetime.datetime(*data.modified[0:6])
+                    else:
+                        self.last_modified = datetime.datetime.now()
 
             self.last_update_successful = True
             self.last_status_code = data.status
