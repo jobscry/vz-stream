@@ -127,7 +127,7 @@ class Source(models.Model):
             text = text[username+2:]
         
         text = TWITTER_AT.sub(TWITTER_AT_REPLACE, text)
-        text = TWITTER_HASH.sub(r'<a href="http://twitter.com/#search?q=%23\1" title="\1">\1</a>', text)
+        text = TWITTER_HASH.sub(r'<a href="http://twitter.com/#search?q=%23\1" title="\1">#\1</a>', text)
         
         return text
 
