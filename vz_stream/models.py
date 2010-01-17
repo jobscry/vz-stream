@@ -69,7 +69,7 @@ class Source(models.Model):
                     else:
                         created_on = datetime.datetime(*dentry.updated_parsed[0:6])
 
-                    if self.last_modified and (created_on < self.last_modified):
+                    if self.last_modified is not None and (created_on < self.last_modified):
                         break
 
                     if dentry.has_key('title'):
@@ -92,12 +92,10 @@ class Source(models.Model):
                         created_on=created_on
                     )
 
-                    if data.has_key('etag'):
-                        self.etag = data.etag
-                    if data.has_key('modified'):
-                        self.last_modified = datetime.datetime(*data.modified[0:6])
-                    else:
-                        self.last_modified = datetime.datetime.now()
+                if data.has_key('etag'):
+                    self.etag = data.etag
+                if data.has_key('modified'):
+                    self.last_modified = datetime.datetime(*data.modified[0:6])
 
             self.last_update_successful = True
             self.last_status_code = data.status
