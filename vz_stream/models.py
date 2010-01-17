@@ -11,7 +11,7 @@ USER_AGENT = 'vz_stream/0.1 +http://jobscry.net'
 TWITTER_AT = re.compile(r'@([^\s]+)')
 TWITTER_AT_REPLACE = r'<a href="http://twitter.com/\1" title="\1 twitter feed">@\1</a>'
 TWITTER_HASH = re.compile(r'(#[^\s]+)')
-URL = re.compile(r'(http://[^\s]+)', re.I)
+URL = re.compile(r'(http://[^\s\)]+)', re.I)
 
 class Source(models.Model):
     """
