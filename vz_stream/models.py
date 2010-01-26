@@ -71,7 +71,7 @@ class Source(models.Model):
                     else:
                         created_on = datetime.datetime(*dentry.updated_parsed[0:6])
 
-                    if self.last_modified is not None and (created_on < self.last_modified):
+                    if self.last_modified is not None and (created_on <= self.last_modified):
                         break
 
                     if dentry.has_key('title'):
